@@ -1,6 +1,6 @@
 pipeline{
     agent any
-    
+
     environment{
 
         AWS_REGION= 'ap-south-1'
@@ -144,7 +144,7 @@ pipeline{
 }
 
 def buildAndPush(String DB_IMAGE, String BUILD_CONTEXT){
-    def image= docker.build("${env.ECR_REGISTRY}/${DB_IMAGE}:${env.GIT_COMMIT}",${BUILD_CONTEXT})
+    def image= docker.build("${env.ECR_REGISTRY}/${DB_IMAGE}:${env.GIT_COMMIT}","${BUILD_CONTEXT}")
 
     docker.withRegistry("${env.ECR_REGISTRY_URL}","ecr:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
         image.push()
