@@ -74,7 +74,7 @@ pipeline {
                 script {
 
                     deployToECS(
-                        'task-definition.json',
+                        'backend/task-definition.json',
                         env.ECS_TASK_FAMILY,
                         env.ECS_SERVICE_DEV
                     )
