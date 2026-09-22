@@ -1,0 +1,60 @@
+{
+    "family": "employee-management-frontend",
+
+    "executionRoleArn": "arn:aws:iam::288497659312:role/ecsTaskExecutionRole",
+
+    "networkMode": "awsvpc",
+
+    "containerDefinitions": [
+        {
+            "name": "employee-management-frontend",
+
+            "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-backend-${ENV}:${COMMIT_ID}",
+
+            "cpu": 0,
+
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp",
+                    "name": "employee-management-backend-5000-tcp",
+                    "appProtocol": "http"
+                }
+            ],
+
+            "essential": true,
+
+            "environment": [],
+
+            "environmentFiles": [],
+
+            "mountPoints": [],
+
+            "volumesFrom": [],
+
+            "ulimits": [],
+
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/employee-management-backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+
+            "systemControls": []
+        }
+    ],
+
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+
+    "cpu": "512",
+
+    "memory": "1024"
+}
