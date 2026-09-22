@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: myql
-          image: mysql:8
+          image: {{AWS_ACC_ID}}.dkr.ecr.ap-south-1.amazonaws.com/employee-management-db-{{env}}:{{COMMIT_ID}}
           ports:
             - containerPort: 3306
           env:
