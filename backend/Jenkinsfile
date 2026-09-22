@@ -8,17 +8,16 @@ pipeline{
         ECR_REGISTRY= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         ECR_REGISTRY_URL= "https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-        DB_IMAGE_DEV= 'employee-management-db-dev'
-        DB_IMAGE_QA= 'employee-management-db-qa'
-        DB_IMAGE_UAT= 'employee-management-db-uat'
-        DB_IMAGE_PROD= 'employee-management-db-prod'
+        DB_IMAGE_DEV= 'employee-management-backend-dev'
+        DB_IMAGE_QA= 'employee-management-backend-qa'
+        DB_IMAGE_UAT= 'employee-management-backend-uat'
+        DB_IMAGE_PROD= 'employee-management-backend-prod'
 
         AWS_CREDENTIALS= 'aws-ecr-credentials'
 
         ECR='ecr'
 
-        BUILD_CONTEXT= './db'
-
+        BUILD_CONTEXT= './backend'
     }
 
     parameters{

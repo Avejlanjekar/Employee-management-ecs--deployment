@@ -14,7 +14,9 @@ pipeline{
         DB_IMAGE_PROD= 'employee-management-db-prod'
 
         AWS_CREDENTIALS= 'aws-ecr-credentials'
-
+        
+        ECR= 'ecr'
+        
         BUILD_CONTEXT= './db'
 
     }
@@ -146,20 +148,20 @@ pipeline{
 def buildAndPush(String DB_IMAGE, String BUILD_CONTEXT){
     def image= docker.build("${env.ECR_REGISTRY}/${DB_IMAGE}:${env.GIT_COMMIT}","${BUILD_CONTEXT}")
 
-    docker.withRegistry("${env.ECR_REGISTRY_URL}","ecr:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
+    docker.withRegistry("${env.ECR_REGISTRY_URL}","${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
         image.push()
     }
 }
 
 def promoteImage(String sourceImage, String targetImage){
 
-    docker.withRegistry("${env.ECR_REGISTRY_URL}","ecr:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
+    docker.withRegistry("${env.ECR_REGISTRY_URL}","${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
         docker.image("${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT}").pull()
     }
 
     sh "docker tag ${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT} ${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}"
                     
-    docker.withRegistry("${env.ECR_REGISTRY_URL}","ecr:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
+    docker.withRegistry("${env.ECR_REGISTRY_URL}","${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"){
         docker.image("${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}").push()
     }
 }
