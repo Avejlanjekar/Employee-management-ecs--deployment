@@ -105,7 +105,7 @@ pipeline{
             }
 
             steps{
-                input message: 'promote to prod?'
+                input message: 'promote to prod?',
                       ok: "proceed"
             }
         }
