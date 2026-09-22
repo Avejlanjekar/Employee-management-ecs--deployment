@@ -237,10 +237,6 @@ pipeline {
 
 def buildAndPush(String imageRepository, String buildContext) {
 
-    echo "=========================================="
-    echo "BUILD & PUSH"
-    echo "=========================================="
-
     echo "Repository : ${imageRepository}"
     echo "Commit     : ${env.GIT_COMMIT}"
 
