@@ -19,11 +19,11 @@ pipeline{
     }
 
     parameters{
-        choice{
+        choice(
             name: 'Environment',
             choices: ['dev','qa','uat','prod'],
             description: 'select the Environment'
-        }
+        )
     }
 
     stages{
