@@ -19,9 +19,9 @@ pipeline {
 
         BUILD_CONTEXT = './backend'
 
-        ECS_CLUSTER = 'employee-management-cluster'
+        ECS_CLUSTER = 'employee-management-dev'
 
-        ECS_SERVICE_DEV = 'employee-management-backend-dev'
+        ECS_SERVICE_DEV = 'employee-management-backend'
         ECS_SERVICE_QA = 'employee-management-backend-qa'
         ECS_SERVICE_UAT = 'employee-management-backend-uat'
         ECS_SERVICE_PROD = 'employee-management-backend-prod'
