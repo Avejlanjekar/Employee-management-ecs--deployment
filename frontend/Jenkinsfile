@@ -12,21 +12,21 @@ pipeline {
         AWS_CREDENTIALS = 'aws-ecr-credentials'
         ECR = 'ecr'
 
-        DB_IMAGE_DEV = 'employee-management-db-dev'
-        DB_IMAGE_QA = 'employee-management-db-qa'
-        DB_IMAGE_UAT = 'employee-management-db-uat'
-        DB_IMAGE_PROD = 'employee-management-db-prod'
+        DB_IMAGE_DEV = 'employee-management-frontend-dev'
+        DB_IMAGE_QA = 'employee-management-frontend-qa'
+        DB_IMAGE_UAT = 'employee-management-frontend-uat'
+        DB_IMAGE_PROD = 'employee-management-frontend-prod'
 
-        BUILD_CONTEXT = './db'
+        BUILD_CONTEXT = './frontend'
 
         ECS_CLUSTER = 'employee-management-dev'
 
-        ECS_SERVICE_DEV = 'employee-management-db-dev'
-        ECS_SERVICE_QA = 'employee-management-db-qa'
-        ECS_SERVICE_UAT = 'employee-management-db-uat'
-        ECS_SERVICE_PROD = 'employee-management-db-prod'
+        ECS_SERVICE_DEV = 'employee-management-frontend-dev'
+        ECS_SERVICE_QA = 'employee-management-frontend-qa'
+        ECS_SERVICE_UAT = 'employee-management-frontend-uat'
+        ECS_SERVICE_PROD = 'employee-management-frontend-prod'
 
-        ECS_TASK_FAMILY = 'employee-management-frontend'
+        ECS_TASK_FAMILY = 'employee_management_Frontend'
     }
 
     parameters {
