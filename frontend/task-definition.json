@@ -39,5 +39,5 @@
     "FARGATE"
   ],
   "cpu": "1024",
-  "memory": "3072",
+  "memory": "3072"
 }
