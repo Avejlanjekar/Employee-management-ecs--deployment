@@ -12,14 +12,14 @@ pipeline {
         AWS_CREDENTIALS = 'aws-ecr-credentials'
         ECR = 'ecr'
 
-        DB_IMAGE_DEV = 'employee-management-backend-dev'
-        DB_IMAGE_QA = 'employee-management-backend-qa'
-        DB_IMAGE_UAT = 'employee-management-backend-uat'
-        DB_IMAGE_PROD = 'employee-management-backend-prod'
+        BACKEND_IMAGE_DEV = 'employee-management-backend-dev'
+        BACKEND_IMAGE_QA = 'employee-management-backend-qa'
+        BACKEND_IMAGE_UAT = 'employee-management-backend-uat'
+        BACKEND_IMAGE_PROD = 'employee-management-backend-prod'
 
         BUILD_CONTEXT = './backend'
 
-        ECS_CLUSTER = 'Employee_Management_cluster'
+        ECS_CLUSTER = 'Application-3-cluster'
 
         ECS_SERVICE_DEV = 'employee-management-backend-dev'
         ECS_SERVICE_QA = 'employee-management-backend-qa'
@@ -35,6 +35,12 @@ pipeline {
             name: 'Environment',
             choices: ['dev', 'qa', 'uat', 'prod'],
             description: 'Select the Environment'
+        )
+
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: '',
+            description: 'provide commit id'
         )
     }
 
@@ -263,23 +269,20 @@ def buildAndPush(String imageRepository, String buildContext) {
 
 def promoteImage(String sourceImage, String targetImage) {
 
-    echo "Source : ${sourceImage}:${env.GIT_COMMIT}"
-    echo "Target : ${targetImage}:${env.GIT_COMMIT}"
-
     docker.withRegistry(
         "${env.ECR_REGISTRY_URL}",
         "${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"
     ) {
 
         docker.image(
-            "${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT}"
+            "${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG}"
         ).pull()
     }
 
     sh """
         docker tag \
-        ${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT} \
-        ${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}
+        ${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG} \
+        ${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}
     """
 
     docker.withRegistry(
@@ -288,22 +291,29 @@ def promoteImage(String sourceImage, String targetImage) {
     ) {
 
         docker.image(
-            "${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}"
+            "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
         ).push()
     }
 
 
     echo "Image promoted successfully"
 
-    echo "${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}"
+    echo "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
 }
 
 def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService) {
 
-    sh """
-        sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
-        sed -i 's/\\\${COMMIT_ID}/${env.GIT_COMMIT}/g' ${taskDefinitionFile}
-    """
+    if(params.Environment == 'dev'){
+        sh """
+            sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
+            sed -i 's/\\\${COMMIT_ID}/${env.GIT_COMMIT}/g' ${taskDefinitionFile}
+        """
+    }else{
+        sh """
+            sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
+            sed -i 's/\\\${COMMIT_ID}/${params.IMAGE_TAG}/g' ${taskDefinitionFile}
+        """
+    }
 
     def taskRevision = sh(
         script: """
