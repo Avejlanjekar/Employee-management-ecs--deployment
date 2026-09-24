@@ -19,7 +19,7 @@ pipeline {
 
         BUILD_CONTEXT = './backend'
 
-        ECS_CLUSTER = 'Application-3-cluster'
+        ECS_CLUSTER = 'Employeee_Management_cluster'
 
         ECS_SERVICE_DEV = 'employee-management-backend-dev'
         ECS_SERVICE_QA = 'employee-management-backend-qa'
@@ -67,26 +67,26 @@ pipeline {
         }
 
 
-        // stage('Dev - Deploy to ECS') {
+        stage('Dev - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'dev'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'dev'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 'backend/task-definition.json',
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_DEV
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        'backend/task-definition.json',
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_DEV
+                    )
+                }
+            }
+        }
 
         stage('Promote Dev to QA') {
 
