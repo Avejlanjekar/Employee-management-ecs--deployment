@@ -19,14 +19,14 @@ pipeline {
 
         BUILD_CONTEXT = './db'
 
-        ECS_CLUSTER = 'employee-management-dev'
+        ECS_CLUSTER = 'employee-management-cluster'
 
         ECS_SERVICE_DEV = 'employee-management-db-dev'
         ECS_SERVICE_QA = 'employee-management-db-qa'
         ECS_SERVICE_UAT = 'employee-management-db-uat'
         ECS_SERVICE_PROD = 'employee-management-db-prod'
 
-        ECS_TASK_FAMILY = 'employee-management-frontend'
+        ECS_TASK_FAMILY = 'employee-management-db'
     }
 
     parameters {
@@ -35,6 +35,12 @@ pipeline {
             name: 'Environment',
             choices: ['dev', 'qa', 'uat', 'prod'],
             description: 'Select the Environment'
+        )
+
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: '',
+            description: 'provide commit id'
         )
     }
 
@@ -61,26 +67,26 @@ pipeline {
         }
 
 
-        stage('Dev - Deploy to ECS') {
+        // stage('Dev - Deploy to ECS') {
 
-            when {
-                expression {
-                    params.Environment == 'dev'
-                }
-            }
+        //     when {
+        //         expression {
+        //             params.Environment == 'dev'
+        //         }
+        //     }
 
-            steps {
+        //     steps {
 
-                script {
+        //         script {
 
-                    deployToECS(
-                        'db/task-definition.json',
-                        env.ECS_TASK_FAMILY,
-                        env.ECS_SERVICE_DEV
-                    )
-                }
-            }
-        }
+        //             deployToECS(
+        //                 'backend/task-definition.json',
+        //                 env.ECS_TASK_FAMILY,
+        //                 env.ECS_SERVICE_DEV
+        //             )
+        //         }
+        //     }
+        // }
 
         stage('Promote Dev to QA') {
 
@@ -103,26 +109,26 @@ pipeline {
         }
 
 
-        stage('QA - Deploy to ECS') {
+        // stage('QA - Deploy to ECS') {
 
-            when {
-                expression {
-                    params.Environment == 'qa'
-                }
-            }
+        //     when {
+        //         expression {
+        //             params.Environment == 'qa'
+        //         }
+        //     }
 
-            steps {
+        //     steps {
 
-                script {
+        //         script {
 
-                    deployToECS(
-                        'db/task-definition.json',
-                        env.ECS_TASK_FAMILY,
-                        env.ECS_SERVICE_QA
-                    )
-                }
-            }
-        }
+        //             deployToECS(
+        //                 'backend/task-definition.json',
+        //                 env.ECS_TASK_FAMILY,
+        //                 env.ECS_SERVICE_QA
+        //             )
+        //         }
+        //     }
+        // }
 
         stage('Promote QA to UAT') {
 
@@ -145,26 +151,26 @@ pipeline {
         }
 
 
-        stage('UAT - Deploy to ECS') {
+        // stage('UAT - Deploy to ECS') {
 
-            when {
-                expression {
-                    params.Environment == 'uat'
-                }
-            }
+        //     when {
+        //         expression {
+        //             params.Environment == 'uat'
+        //         }
+        //     }
 
-            steps {
+        //     steps {
 
-                script {
+        //         script {
 
-                    deployToECS(
-                        'db/task-definition.json',
-                        env.ECS_TASK_FAMILY,
-                        env.ECS_SERVICE_UAT
-                    )
-                }
-            }
-        }
+        //             deployToECS(
+        //                 'backend/task-definition.json',
+        //                 env.ECS_TASK_FAMILY,
+        //                 env.ECS_SERVICE_UAT
+        //             )
+        //         }
+        //     }
+        // }
 
         stage('Approval for Prod Deployment') {
 
@@ -204,26 +210,26 @@ pipeline {
         }
 
 
-        stage('PROD - Deploy to ECS') {
+        // stage('PROD - Deploy to ECS') {
 
-            when {
-                expression {
-                    params.Environment == 'prod'
-                }
-            }
+        //     when {
+        //         expression {
+        //             params.Environment == 'prod'
+        //         }
+        //     }
 
-            steps {
+        //     steps {
 
-                script {
+        //         script {
 
-                    deployToECS(
-                        'db/task-definition.json',
-                        env.ECS_TASK_FAMILY,
-                        env.ECS_SERVICE_PROD
-                    )
-                }
-            }
-        }
+        //             deployToECS(
+        //                 'backend/task-definition.json',
+        //                 env.ECS_TASK_FAMILY,
+        //                 env.ECS_SERVICE_PROD
+        //             )
+        //         }
+        //     }
+        // }
     }
 
     post {
@@ -263,23 +269,20 @@ def buildAndPush(String imageRepository, String buildContext) {
 
 def promoteImage(String sourceImage, String targetImage) {
 
-    echo "Source : ${sourceImage}:${env.GIT_COMMIT}"
-    echo "Target : ${targetImage}:${env.GIT_COMMIT}"
-
     docker.withRegistry(
         "${env.ECR_REGISTRY_URL}",
         "${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"
     ) {
 
         docker.image(
-            "${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT}"
+            "${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG}"
         ).pull()
     }
 
     sh """
         docker tag \
-        ${env.ECR_REGISTRY}/${sourceImage}:${env.GIT_COMMIT} \
-        ${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}
+        ${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG} \
+        ${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}
     """
 
     docker.withRegistry(
@@ -288,22 +291,29 @@ def promoteImage(String sourceImage, String targetImage) {
     ) {
 
         docker.image(
-            "${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}"
+            "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
         ).push()
     }
 
 
     echo "Image promoted successfully"
 
-    echo "${env.ECR_REGISTRY}/${targetImage}:${env.GIT_COMMIT}"
+    echo "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
 }
 
 def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService) {
 
-    sh """
-        sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
-        sed -i 's/\\\${COMMIT_ID}/${env.GIT_COMMIT}/g' ${taskDefinitionFile}
-    """
+    if(params.Environment == 'dev'){
+        sh """
+            sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
+            sed -i 's/\\\${COMMIT_ID}/${env.GIT_COMMIT}/g' ${taskDefinitionFile}
+        """
+    }else{
+        sh """
+            sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
+            sed -i 's/\\\${COMMIT_ID}/${params.IMAGE_TAG}/g' ${taskDefinitionFile}
+        """
+    }
 
     def taskRevision = sh(
         script: """
