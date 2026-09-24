@@ -19,7 +19,7 @@ pipeline {
 
         BUILD_CONTEXT = './db'
 
-        ECS_CLUSTER = 'employee-management-cluster'
+        ECS_CLUSTER = 'Employee_Management_cluster'
 
         ECS_SERVICE_DEV = 'employee-management-db-dev'
         ECS_SERVICE_QA = 'employee-management-db-qa'
