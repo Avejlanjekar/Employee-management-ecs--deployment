@@ -2,7 +2,7 @@
   "containerDefinitions": [
     {
       "name": "employee-db",
-      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-db-${ENV}:${Commit_ID}",
+      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-db-${ENV}:${COMMIT_ID}",
       "cpu": 0,
       "portMappings": [
         {
