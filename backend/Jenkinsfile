@@ -59,7 +59,7 @@ pipeline {
                 script {
 
                     buildAndPush(
-                        env.DB_IMAGE_DEV,
+                        env.BACKEND_IMAGE_DEV,
                         env.BUILD_CONTEXT
                     )
                 }
@@ -101,8 +101,8 @@ pipeline {
                 script {
 
                     promoteImage(
-                        env.DB_IMAGE_DEV,
-                        env.DB_IMAGE_QA
+                        env.BACKEND_IMAGE_DEV,
+                        env.BACKEND_IMAGE_QA
                     )
                 }
             }
@@ -143,8 +143,8 @@ pipeline {
                 script {
 
                     promoteImage(
-                        env.DB_IMAGE_QA,
-                        env.DB_IMAGE_UAT
+                        env.BACKEND_IMAGE_QA,
+                        env.BACKEND_IMAGE_UAT
                     )
                 }
             }
@@ -202,8 +202,8 @@ pipeline {
                 script {
 
                     promoteImage(
-                        env.DB_IMAGE_UAT,
-                        env.DB_IMAGE_PROD
+                        env.BACKEND_IMAGE_UAT,
+                        env.BACKEND_IMAGE_PROD
                     )
                 }
             }
