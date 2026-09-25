@@ -1,7 +1,7 @@
 {
   "containerDefinitions": [
     {
-      "name": "employee-management-backend",
+      "name": "employee-backend",
       "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-backend-${ENV}:${COMMIT_ID}",
       "cpu": 0,
       "portMappings": [
@@ -9,12 +9,33 @@
           "containerPort": 5000,
           "hostPort": 5000,
           "protocol": "tcp",
-          "name": "employee-management-backend-5000-tcp",
+          "name": "employee-backend-5000-tcp",
           "appProtocol": "http"
         }
       ],
       "essential": true,
-      "environment": [],
+      "environment": [
+        {
+          "name": "DB_NAME",
+          "value": "example"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "employee-db-${ENV}.employee.local"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_USER",
+          "value": "root"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "db-57xsl"
+        }
+      ],
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
@@ -38,6 +59,6 @@
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "512",
-  "memory": "1024"
+  "cpu": "1024",
+  "memory": "3072"
 }
