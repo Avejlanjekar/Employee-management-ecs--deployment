@@ -67,26 +67,26 @@ pipeline {
         }
 
 
-        // stage('Dev - Deploy to ECS') {
+        stage('Dev - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'dev'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'dev'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 'frontend/task-definition.json',
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_DEV
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        'frontend/task-definition.json',
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_DEV
+                    )
+                }
+            }
+        }
 
         stage('Promote Dev to QA') {
 
@@ -109,26 +109,26 @@ pipeline {
         }
 
 
-        // stage('QA - Deploy to ECS') {
+        stage('QA - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'qa'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'qa'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 'frontend/task-definition.json',
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_QA
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        'frontend/task-definition.json',
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_QA
+                    )
+                }
+            }
+        }
 
         stage('Promote QA to UAT') {
 
@@ -151,26 +151,26 @@ pipeline {
         }
 
 
-        // stage('UAT - Deploy to ECS') {
+        stage('UAT - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'uat'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'uat'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 'frontend/task-definition.json',
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_UAT
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        'frontend/task-definition.json',
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_UAT
+                    )
+                }
+            }
+        }
 
         stage('Approval for Prod Deployment') {
 
@@ -210,26 +210,26 @@ pipeline {
         }
 
 
-        // stage('PROD - Deploy to ECS') {
+        stage('PROD - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'prod'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'prod'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 'frontend/task-definition.json',
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_PROD
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        'frontend/task-definition.json',
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_PROD
+                    )
+                }
+            }
+        }
     }
 
     post {

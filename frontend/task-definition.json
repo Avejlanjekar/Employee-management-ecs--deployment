@@ -2,7 +2,7 @@
   "containerDefinitions": [
     {
       "name": "employee-frontend",
-      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-frontend-dev@sha256:9b1c7c10c456bb3aae0c612a77f85a805f0616ccb0988d0f03e8b1c570a1e914",
+      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-frontend-${ENV}:${COMMIT_ID}",
       "cpu": 0,
       "portMappings": [
         {
@@ -43,6 +43,6 @@
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "512",
-  "memory": "1024"
+  "cpu": "256",
+  "memory": "512"
 }
