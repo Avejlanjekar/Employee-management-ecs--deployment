@@ -1,20 +1,25 @@
 {
   "containerDefinitions": [
     {
-      "name": "employee-management-frontend",
-      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-frontend-${ENV}:${COMMIT_ID}",
+      "name": "employee-frontend",
+      "image": "288497659312.dkr.ecr.ap-south-1.amazonaws.com/employee-management-frontend-dev@sha256:9b1c7c10c456bb3aae0c612a77f85a805f0616ccb0988d0f03e8b1c570a1e914",
       "cpu": 0,
       "portMappings": [
         {
           "containerPort": 80,
           "hostPort": 80,
           "protocol": "tcp",
-          "name": "employee-management-frontend-80-tcp",
+          "name": "employee-frontend-80-tcp",
           "appProtocol": "http"
         }
       ],
       "essential": true,
-      "environment": [],
+      "environment": [
+        {
+          "name": "BACKEND_HOST",
+          "value": "employee-backend-${ENV}.employee.local"
+        }
+      ],
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
@@ -22,7 +27,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/employee_management_Frontend",
+          "awslogs-group": "/ecs/employee-management-frontend",
           "awslogs-create-group": "true",
           "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "ecs"
@@ -32,12 +37,12 @@
       "systemControls": []
     }
   ],
-  "family": "employee_management_Frontend",
+  "family": "employee-management-frontend",
   "executionRoleArn": "arn:aws:iam::288497659312:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "1024",
-  "memory": "3072"
+  "cpu": "512",
+  "memory": "1024"
 }
