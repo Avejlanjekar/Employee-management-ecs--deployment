@@ -69,26 +69,26 @@ pipeline {
         }
 
 
-        // stage('Dev - Deploy to ECS') {
+        stage('Dev - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'dev'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'dev'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 env.TASK_DEFINITION,
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_DEV
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        env.TASK_DEFINITION,
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_DEV
+                    )
+                }
+            }
+        }
 
         // stage('Promote Dev to QA') {
 
