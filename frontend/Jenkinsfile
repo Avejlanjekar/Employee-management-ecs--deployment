@@ -19,14 +19,14 @@ pipeline {
 
         BUILD_CONTEXT = './frontend'
 
-        ECS_CLUSTER = 'Employeee_Management_cluster'
+        ECS_CLUSTER = 'app-ecs-cluster-dev'
 
-        ECS_SERVICE_DEV = 'employee-management-frontend-dev'
-        ECS_SERVICE_QA = 'employee-management-frontend-qa'
-        ECS_SERVICE_UAT = 'employee-management-frontend-uat'
-        ECS_SERVICE_PROD = 'employee-management-frontend-prod'
+        ECS_SERVICE_DEV = 'app-frontend-service-dev'
+        ECS_SERVICE_QA = 'app-frontend-service-qa'
+        ECS_SERVICE_UAT = 'app-frontend-service-uat'
+        ECS_SERVICE_PROD = 'app-frontend-service-prod'
 
-        ECS_TASK_FAMILY = 'employee-management-frontend'
+        ECS_TASK_FAMILY = 'app-frontend-dev'
 
         TASK_DEFINITION = 'frontend/task-definition.json'
     }
@@ -317,22 +317,28 @@ def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService)
         """
     }
 
-    def taskRevision = sh(
-        script: """
-            aws ecs register-task-definition \
-                --cli-input-json file://${taskDefinitionFile} \
-                --region ${env.AWS_REGION} \
-                --query 'taskDefinition.revision' \
-                --output text
-        """,
-        returnStdout: true
-    ).trim()
+    withCredentials([
+        [$class: 'AmazonWebServicesCredentialsBinding',
+         credentialsId: env.AWS_CREDENTIALS]
+    ]){
+        def taskRevision = sh(
 
-    sh """
-        aws ecs update-service \
-            --cluster ${env.ECS_CLUSTER} \
-            --service ${ecsService} \
-            --task-definition ${taskFamily}:${taskRevision} \
-            --region ${env.AWS_REGION}
-    """
+            script: """
+                aws ecs register-task-definition \
+                    --cli-input-json file://${taskDefinitionFile} \
+                    --region ${env.AWS_REGION} \
+                    --query 'taskDefinition.revision' \
+                    --output text
+            """,
+            returnStdout: true
+        ).trim()
+
+        sh """
+            aws ecs update-service \
+                --cluster ${env.ECS_CLUSTER} \
+                --service ${ecsService} \
+                --task-definition ${taskFamily}:${taskRevision} \
+                --region ${env.AWS_REGION}
+        """
+    }
 }
