@@ -13,20 +13,20 @@ pipeline {
         ECR = 'ecr'
 
         FRONTEND_IMAGE_DEV = 'app-frontend-dev'
-        FRONTEND_IMAGE_QA = 'employee-management-frontend-qa'
-        FRONTEND_IMAGE_UAT = 'employee-management-frontend-uat'
-        FRONTEND_IMAGE_PROD = 'employee-management-frontend-prod'
+        FRONTEND_IMAGE_QA = 'app-frontend-qa'
+        FRONTEND_IMAGE_UAT = 'app-frontend-uat'
+        FRONTEND_IMAGE_PROD = 'app-frontend-prod'
 
         BUILD_CONTEXT = './frontend'
 
-        ECS_CLUSTER = 'app-ecs-cluster-dev'
+        ECS_CLUSTER = 'app-ecs-cluster-qa'
 
         ECS_SERVICE_DEV = 'app-frontend-service-dev'
         ECS_SERVICE_QA = 'app-frontend-service-qa'
         ECS_SERVICE_UAT = 'app-frontend-service-uat'
         ECS_SERVICE_PROD = 'app-frontend-service-prod'
 
-        ECS_TASK_FAMILY = 'app-frontend-dev'
+        ECS_TASK_FAMILY = 'app-frontend-qa'
 
         TASK_DEFINITION = 'frontend/task-definition.json'
     }
