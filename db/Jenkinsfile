@@ -90,25 +90,25 @@ pipeline {
             }
         }
 
-        // stage('Promote Dev to QA') {
+        stage('Promote Dev to QA') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'qa'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'qa'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             promoteImage(
-        //                 env.DB_IMAGE_DEV,
-        //                 env.DB_IMAGE_QA
-        //             )
-        //         }
-        //     }
-        // }
+                    promoteImage(
+                        env.DB_IMAGE_DEV,
+                        env.DB_IMAGE_QA
+                    )
+                }
+            }
+        }
 
 
         // stage('QA - Deploy to ECS') {
