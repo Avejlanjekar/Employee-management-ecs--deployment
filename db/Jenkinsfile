@@ -19,7 +19,10 @@ pipeline {
 
         BUILD_CONTEXT = './db'
 
-        ECS_CLUSTER = 'app-ecs-cluster-dev'
+        ECS_CLUSTER_DEV = 'app-ecs-cluster-dev'
+        ECS_CLUSTER_QA = 'app-ecs-cluster-qa'
+        ECS_CLUSTER_UAT = 'app-ecs-cluster-uat'
+        ECS_CLUSTER_PROD = 'app-ecs-cluster-prod'
 
         ECS_SERVICE_DEV = 'app-database-service-dev'
         ECS_SERVICE_QA = 'app-database-service-qa'
@@ -84,7 +87,8 @@ pipeline {
                     deployToECS(
                         env.TASK_DEFINITION,
                         env.ECS_TASK_FAMILY,
-                        env.ECS_SERVICE_DEV
+                        env.ECS_SERVICE_DEV,
+                        env.ECS_CLUSTER_DEV
                     )
                 }
             }
@@ -111,46 +115,47 @@ pipeline {
         }
 
 
-        // stage('QA - Deploy to ECS') {
+        stage('QA - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'qa'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'qa'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 env.TASK_DEFINITION,
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_QA
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        env.TASK_DEFINITION,
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_QA,
+                        env.ECS_CLUSTER_QA
+                    )
+                }
+            }
+        }
 
-        // stage('Promote QA to UAT') {
+        stage('Promote QA to UAT') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'uat'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'uat'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             promoteImage(
-        //                 env.DB_IMAGE_QA,
-        //                 env.DB_IMAGE_UAT
-        //             )
-        //         }
-        //     }
-        // }
+                    promoteImage(
+                        env.DB_IMAGE_QA,
+                        env.DB_IMAGE_UAT
+                    )
+                }
+            }
+        }
 
 
         // stage('UAT - Deploy to ECS') {
@@ -168,7 +173,8 @@ pipeline {
         //             deployToECS(
         //                 env.TASK_DEFINITION,
         //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_UAT
+        //                 env.ECS_SERVICE_UAT,
+        //                 env.ECS_CLUSTER_UAT
         //             )
         //         }
         //     }
@@ -227,7 +233,8 @@ pipeline {
         //             deployToECS(
         //                 env.TASK_DEFINITION,
         //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_PROD
+        //                 env.ECS_SERVICE_PROD,
+        //                 env.ECS_CLUSTER_PROD
         //             )
         //         }
         //     }
@@ -303,7 +310,7 @@ def promoteImage(String sourceImage, String targetImage) {
     echo "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
 }
 
-def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService) {
+def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService, String ecsCluster) {
 
     if(params.Environment == 'dev'){
         sh """
@@ -335,7 +342,7 @@ def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService)
 
         sh """
             aws ecs update-service \
-                --cluster ${env.ECS_CLUSTER} \
+                --cluster ${ecsCluster} \
                 --service ${ecsService} \
                 --task-definition ${taskFamily}:${taskRevision} \
                 --region ${env.AWS_REGION}
