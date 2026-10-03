@@ -161,64 +161,64 @@ pipeline {
         }
 
 
-        // stage('UAT - Deploy to ECS') {
+        stage('UAT - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'uat'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'uat'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 env.TASK_DEFINITION,
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_UAT,
-        //                 env.ECS_CLUSTER_UAT
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        env.TASK_DEFINITION,
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_UAT,
+                        env.ECS_CLUSTER_UAT
+                    )
+                }
+            }
+        }
 
-        // stage('Approval for Prod Deployment') {
+        stage('Approval for Prod Deployment') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'prod'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'prod'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         input(
-        //             message: 'Promote UAT image to PROD?',
-        //             ok: 'Proceed'
-        //         )
-        //     }
-        // }
+                input(
+                    message: 'Promote UAT image to PROD?',
+                    ok: 'Proceed'
+                )
+            }
+        }
 
-        // stage('Promote UAT to PROD') {
+        stage('Promote UAT to PROD') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'prod'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'prod'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             promoteImage(
-        //                 env.BACKEND_IMAGE_UAT,
-        //                 env.BACKEND_IMAGE_PROD
-        //             )
-        //         }
-        //     }
-        // }
+                    promoteImage(
+                        env.BACKEND_IMAGE_UAT,
+                        env.BACKEND_IMAGE_PROD
+                    )
+                }
+            }
+        }
 
 
         // stage('PROD - Deploy to ECS') {
