@@ -29,7 +29,10 @@ pipeline {
         ECS_SERVICE_UAT = 'app-frontend-service-uat'
         ECS_SERVICE_PROD = 'app-frontend-service-prod'
 
-        ECS_TASK_FAMILY = 'app-frontend-qa'
+        ECS_TASK_FAMILY_DEV = 'app-frontend-dev'
+        ECS_TASK_FAMILY_QA = 'app-frontend-qa'
+        ECS_TASK_FAMILY_UAT = 'app-frontend-uat'
+        ECS_TASK_FAMILY_PROD = 'app-frontend-prod'
 
         TASK_DEFINITION = 'frontend/task-definition.json'
     }
@@ -86,7 +89,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_DEV,
                         env.ECS_SERVICE_DEV,
                         env.ECS_CLUSTER_DEV
                     )
@@ -129,7 +132,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_QA,
                         env.ECS_SERVICE_QA,
                         env.ECS_CLUSTER_QA
                     )
@@ -172,7 +175,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_UAT,
                         env.ECS_SERVICE_UAT,
                         env.ECS_CLUSTER_UAT
                     )
@@ -232,7 +235,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_PROD,
                         env.ECS_SERVICE_PROD,
                         env.ECS_CLUSTER_PROD
                     )
