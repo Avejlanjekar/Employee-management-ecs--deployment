@@ -175,7 +175,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_UAT,
                         env.ECS_SERVICE_UAT,
                         env.ECS_CLUSTER_UAT
                     )
