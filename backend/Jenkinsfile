@@ -235,7 +235,7 @@ pipeline {
 
                     deployToECS(
                         env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY,
+                        env.ECS_TASK_FAMILY_PROD,
                         env.ECS_SERVICE_PROD,
                         env.ECS_CLUSTER_PROD
                     )
