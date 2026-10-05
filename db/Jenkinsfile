@@ -218,27 +218,27 @@ pipeline {
         }
 
 
-        // stage('PROD - Deploy to ECS') {
+        stage('PROD - Deploy to ECS') {
 
-        //     when {
-        //         expression {
-        //             params.Environment == 'prod'
-        //         }
-        //     }
+            when {
+                expression {
+                    params.Environment == 'prod'
+                }
+            }
 
-        //     steps {
+            steps {
 
-        //         script {
+                script {
 
-        //             deployToECS(
-        //                 env.TASK_DEFINITION,
-        //                 env.ECS_TASK_FAMILY,
-        //                 env.ECS_SERVICE_PROD,
-        //                 env.ECS_CLUSTER_PROD
-        //             )
-        //         }
-        //     }
-        // }
+                    deployToECS(
+                        env.TASK_DEFINITION,
+                        env.ECS_TASK_FAMILY,
+                        env.ECS_SERVICE_PROD,
+                        env.ECS_CLUSTER_PROD
+                    )
+                }
+            }
+        }
     }
 
     post {
