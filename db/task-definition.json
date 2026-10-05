@@ -27,7 +27,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/app-database-dev",
+          "awslogs-group": "/ecs/app-database-${ENV}",
           "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "database"
         }
@@ -35,8 +35,8 @@
       "systemControls": []
     }
   ],
-  "family": "app-database-dev",
-  "executionRoleArn": "arn:aws:iam::916921211430:role/app-ecs-task-execution-role-dev",
+  "family": "app-database-${ENV}",
+  "executionRoleArn": "arn:aws:iam::916921211430:role/app-ecs-task-execution-role-${ENV}",
   "networkMode": "awsvpc",
   "requiresCompatibilities": [
     "FARGATE"

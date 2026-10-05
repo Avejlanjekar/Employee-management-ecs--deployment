@@ -23,7 +23,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/app-frontend-dev",
+          "awslogs-group": "/ecs/app-frontend-${ENV}",
           "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "frontend"
         }
@@ -31,8 +31,8 @@
       "systemControls": []
     }
   ],
-  "family": "app-frontend-dev",
-  "executionRoleArn": "arn:aws:iam::916921211430:role/app-ecs-task-execution-role-dev",
+  "family": "app-frontend-${ENV}",
+  "executionRoleArn": "arn:aws:iam::916921211430:role/app-ecs-task-execution-role-${ENV}",
   "networkMode": "awsvpc",
   "requiresCompatibilities": [
     "FARGATE"
