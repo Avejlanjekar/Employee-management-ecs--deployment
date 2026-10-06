@@ -2,43 +2,33 @@ pipeline {
     agent any
 
     environment {
-
-        AWS_REGION = 'ap-south-1'
-        AWS_ACCOUNT_ID = credentials('aws-account-id')
-
-        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        ECR_REGISTRY_URL = "https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-
-        AWS_CREDENTIALS = 'aws-ecr-credentials'
-        ECR = 'ecr'
-
-        FRONTEND_IMAGE_DEV = 'app-frontend-dev'
-        FRONTEND_IMAGE_QA = 'app-frontend-qa'
-        FRONTEND_IMAGE_UAT = 'app-frontend-uat'
-        FRONTEND_IMAGE_PROD = 'app-frontend-prod'
-
-        BUILD_CONTEXT = './frontend'
-
-        ECS_CLUSTER_DEV = 'app-ecs-cluster-dev'
-        ECS_CLUSTER_QA = 'app-ecs-cluster-qa'
-        ECS_CLUSTER_UAT = 'app-ecs-cluster-uat'
-        ECS_CLUSTER_PROD = 'app-ecs-cluster-prod'
-
-        ECS_SERVICE_DEV = 'app-frontend-service-dev'
-        ECS_SERVICE_QA = 'app-frontend-service-qa'
-        ECS_SERVICE_UAT = 'app-frontend-service-uat'
-        ECS_SERVICE_PROD = 'app-frontend-service-prod'
-
-        ECS_TASK_FAMILY_DEV = 'app-frontend-dev'
-        ECS_TASK_FAMILY_QA = 'app-frontend-qa'
-        ECS_TASK_FAMILY_UAT = 'app-frontend-uat'
+        AWS_REGION           = 'ap-south-1'
+        AWS_ACCOUNT_ID       = credentials('aws-account-id')
+        ECR_REGISTRY         = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        ECR_REGISTRY_URL     = "https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        AWS_CREDENTIALS      = 'aws-ecr-credentials'
+        ECR                  = 'ecr'
+        FRONTEND_IMAGE_DEV   = 'app-frontend-dev'
+        FRONTEND_IMAGE_QA    = 'app-frontend-qa'
+        FRONTEND_IMAGE_UAT   = 'app-frontend-uat'
+        FRONTEND_IMAGE_PROD  = 'app-frontend-prod'
+        BUILD_CONTEXT        = './frontend'
+        ECS_CLUSTER_DEV      = 'app-ecs-cluster-dev'
+        ECS_CLUSTER_QA       = 'app-ecs-cluster-qa'
+        ECS_CLUSTER_UAT      = 'app-ecs-cluster-uat'
+        ECS_CLUSTER_PROD     = 'app-ecs-cluster-prod'
+        ECS_SERVICE_DEV      = 'app-frontend-service-dev'
+        ECS_SERVICE_QA       = 'app-frontend-service-qa'
+        ECS_SERVICE_UAT      = 'app-frontend-service-uat'
+        ECS_SERVICE_PROD     = 'app-frontend-service-prod'
+        ECS_TASK_FAMILY_DEV  = 'app-frontend-dev'
+        ECS_TASK_FAMILY_QA   = 'app-frontend-qa'
+        ECS_TASK_FAMILY_UAT  = 'app-frontend-uat'
         ECS_TASK_FAMILY_PROD = 'app-frontend-prod'
-
-        TASK_DEFINITION = 'frontend/task-definition.json'
+        TASK_DEFINITION      = 'frontend/task-definition.json'
     }
 
     parameters {
-
         choice(
             name: 'Environment',
             choices: ['dev', 'qa', 'uat', 'prod'],
@@ -53,19 +43,14 @@ pipeline {
     }
 
     stages {
-
         stage('Dev - Build & Push') {
-
             when {
                 expression {
                     params.Environment == 'dev'
                 }
             }
-
             steps {
-
                 script {
-
                     buildAndPush(
                         env.FRONTEND_IMAGE_DEV,
                         env.BUILD_CONTEXT
@@ -74,19 +59,14 @@ pipeline {
             }
         }
 
-
         stage('Dev - Deploy to ECS') {
-
             when {
                 expression {
                     params.Environment == 'dev'
                 }
             }
-
             steps {
-
                 script {
-
                     deployToECS(
                         env.TASK_DEFINITION,
                         env.ECS_TASK_FAMILY_DEV,
@@ -98,17 +78,13 @@ pipeline {
         }
 
         stage('Promote Dev to QA') {
-
             when {
                 expression {
                     params.Environment == 'qa'
                 }
             }
-
             steps {
-
                 script {
-
                     promoteImage(
                         env.FRONTEND_IMAGE_DEV,
                         env.FRONTEND_IMAGE_QA
@@ -117,19 +93,14 @@ pipeline {
             }
         }
 
-
         stage('QA - Deploy to ECS') {
-
             when {
                 expression {
                     params.Environment == 'qa'
                 }
             }
-
             steps {
-
                 script {
-
                     deployToECS(
                         env.TASK_DEFINITION,
                         env.ECS_TASK_FAMILY_QA,
@@ -141,17 +112,13 @@ pipeline {
         }
 
         stage('Promote QA to UAT') {
-
             when {
                 expression {
                     params.Environment == 'uat'
                 }
             }
-
             steps {
-
                 script {
-
                     promoteImage(
                         env.FRONTEND_IMAGE_QA,
                         env.FRONTEND_IMAGE_UAT
@@ -160,19 +127,14 @@ pipeline {
             }
         }
 
-
         stage('UAT - Deploy to ECS') {
-
             when {
                 expression {
                     params.Environment == 'uat'
                 }
             }
-
             steps {
-
                 script {
-
                     deployToECS(
                         env.TASK_DEFINITION,
                         env.ECS_TASK_FAMILY_UAT,
@@ -184,15 +146,12 @@ pipeline {
         }
 
         stage('Approval for Prod Deployment') {
-
             when {
                 expression {
                     params.Environment == 'prod'
                 }
             }
-
             steps {
-
                 input(
                     message: 'Promote UAT image to PROD?',
                     ok: 'Proceed'
@@ -201,17 +160,13 @@ pipeline {
         }
 
         stage('Promote UAT to PROD') {
-
             when {
                 expression {
                     params.Environment == 'prod'
                 }
             }
-
             steps {
-
                 script {
-
                     promoteImage(
                         env.FRONTEND_IMAGE_UAT,
                         env.FRONTEND_IMAGE_PROD
@@ -220,19 +175,14 @@ pipeline {
             }
         }
 
-
         stage('PROD - Deploy to ECS') {
-
             when {
                 expression {
                     params.Environment == 'prod'
                 }
             }
-
             steps {
-
                 script {
-
                     deployToECS(
                         env.TASK_DEFINITION,
                         env.ECS_TASK_FAMILY_PROD,
@@ -245,76 +195,56 @@ pipeline {
     }
 
     post {
-
         always {
-
             deleteDir()
         }
     }
 }
 
 def buildAndPush(String imageRepository, String buildContext) {
-
     echo "Repository : ${imageRepository}"
     echo "Commit     : ${env.GIT_COMMIT}"
-
-
     def image = docker.build(
         "${env.ECR_REGISTRY}/${imageRepository}:${env.GIT_COMMIT}",
         buildContext
     )
-
-
     docker.withRegistry(
         "${env.ECR_REGISTRY_URL}",
         "${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"
     ) {
-
         image.push()
     }
-
-
     echo "Image pushed successfully"
-
     echo "${env.ECR_REGISTRY}/${imageRepository}:${env.GIT_COMMIT}"
 }
 
 def promoteImage(String sourceImage, String targetImage) {
-
     docker.withRegistry(
         "${env.ECR_REGISTRY_URL}",
         "${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"
     ) {
-
         docker.image(
             "${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG}"
         ).pull()
     }
-
     sh """
         docker tag \
         ${env.ECR_REGISTRY}/${sourceImage}:${params.IMAGE_TAG} \
         ${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}
     """
-
     docker.withRegistry(
         "${env.ECR_REGISTRY_URL}",
         "${env.ECR}:${env.AWS_REGION}:${env.AWS_CREDENTIALS}"
     ) {
-
         docker.image(
             "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
         ).push()
     }
-
-
     echo "Image promoted successfully"
-
     echo "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
 }
 
 def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService, String ecsCluster) {
-
     if(params.Environment == 'dev'){
         sh """
             sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
@@ -326,13 +256,11 @@ def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService,
             sed -i 's/\\\${COMMIT_ID}/${params.IMAGE_TAG}/g' ${taskDefinitionFile}
         """
     }
-
     withCredentials([
         [$class: 'AmazonWebServicesCredentialsBinding',
          credentialsId: env.AWS_CREDENTIALS]
     ]){
         def taskRevision = sh(
-
             script: """
                 aws ecs register-task-definition \
                     --cli-input-json file://${taskDefinitionFile} \
@@ -342,7 +270,6 @@ def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService,
             """,
             returnStdout: true
         ).trim()
-
         sh """
             aws ecs update-service \
                 --cluster ${ecsCluster} \
