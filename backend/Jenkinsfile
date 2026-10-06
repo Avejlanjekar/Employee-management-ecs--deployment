@@ -8,23 +8,11 @@ pipeline {
         ECR_REGISTRY_URL     = "https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         AWS_CREDENTIALS      = 'aws-ecr-credentials'
         ECR                  = 'ecr'
-        BACKEND_IMAGE_DEV    = 'app-backend-dev'
-        BACKEND_IMAGE_QA     = 'app-backend-qa'
-        BACKEND_IMAGE_UAT    = 'app-backend-uat'
-        BACKEND_IMAGE_PROD   = 'app-backend-prod'
+        BACKEND_IMAGE        = 'app-backend'
         BUILD_CONTEXT        = './backend'
-        ECS_CLUSTER_DEV      = 'app-ecs-cluster-dev'
-        ECS_CLUSTER_QA       = 'app-ecs-cluster-qa'
-        ECS_CLUSTER_UAT      = 'app-ecs-cluster-uat'
-        ECS_CLUSTER_PROD     = 'app-ecs-cluster-prod'
-        ECS_SERVICE_DEV      = 'app-backend-service-dev'
-        ECS_SERVICE_QA       = 'app-backend-service-qa'
-        ECS_SERVICE_UAT      = 'app-backend-service-uat'
-        ECS_SERVICE_PROD     = 'app-backend-service-prod'
-        ECS_TASK_FAMILY_DEV  = 'app-backend-dev'
-        ECS_TASK_FAMILY_QA   = 'app-backend-qa'
-        ECS_TASK_FAMILY_UAT  = 'app-backend-uat'
-        ECS_TASK_FAMILY_PROD = 'app-backend-prod'
+        ECS_CLUSTER          = 'app-ecs-cluster'
+        ECS_SERVICE          = 'app-backend-service'
+        ECS_TASK_FAMILY      = 'app-backend'
         TASK_DEFINITION      = 'backend/task-definition.json'
     }
 
@@ -51,7 +39,7 @@ pipeline {
             steps {
                 script {
                     buildAndPush(
-                        env.BACKEND_IMAGE_DEV,
+                        "${env.BACKEND_IMAGE}-${params.Environment}",
                         env.BUILD_CONTEXT
                     )
                 }
@@ -67,10 +55,7 @@ pipeline {
             steps {
                 script {
                     deployToECS(
-                        env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY_DEV,
-                        env.ECS_SERVICE_DEV,
-                        env.ECS_CLUSTER_DEV
+                        env.TASK_DEFINITION
                     )
                 }
             }
@@ -85,8 +70,8 @@ pipeline {
             steps {
                 script {
                     promoteImage(
-                        env.BACKEND_IMAGE_DEV,
-                        env.BACKEND_IMAGE_QA
+                        "${env.BACKEND_IMAGE}-dev",
+                        "${env.BACKEND_IMAGE}-${params.Environment}"
                     )
                 }
             }
@@ -101,10 +86,7 @@ pipeline {
             steps {
                 script {
                     deployToECS(
-                        env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY_QA,
-                        env.ECS_SERVICE_QA,
-                        env.ECS_CLUSTER_QA
+                        env.TASK_DEFINITION
                     )
                 }
             }
@@ -119,8 +101,8 @@ pipeline {
             steps {
                 script {
                     promoteImage(
-                        env.BACKEND_IMAGE_QA,
-                        env.BACKEND_IMAGE_UAT
+                        "${env.BACKEND_IMAGE}-qa",
+                        "${env.BACKEND_IMAGE}-${params.Environment}"
                     )
                 }
             }
@@ -135,10 +117,7 @@ pipeline {
             steps {
                 script {
                     deployToECS(
-                        env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY_UAT,
-                        env.ECS_SERVICE_UAT,
-                        env.ECS_CLUSTER_UAT
+                        env.TASK_DEFINITION
                     )
                 }
             }
@@ -167,8 +146,8 @@ pipeline {
             steps {
                 script {
                     promoteImage(
-                        env.BACKEND_IMAGE_UAT,
-                        env.BACKEND_IMAGE_PROD
+                        "${env.BACKEND_IMAGE}-uat",
+                        "${env.BACKEND_IMAGE}-${params.Environment}"
                     )
                 }
             }
@@ -183,10 +162,7 @@ pipeline {
             steps {
                 script {
                     deployToECS(
-                        env.TASK_DEFINITION,
-                        env.ECS_TASK_FAMILY_PROD,
-                        env.ECS_SERVICE_PROD,
-                        env.ECS_CLUSTER_PROD
+                        env.TASK_DEFINITION
                     )
                 }
             }
@@ -244,7 +220,13 @@ def promoteImage(String sourceImage, String targetImage) {
     echo "${env.ECR_REGISTRY}/${targetImage}:${params.IMAGE_TAG}"
 }
 
-def deployToECS(String taskDefinitionFile, String taskFamily, String ecsService, String ecsCluster) {
+def deployToECS(String taskDefinitionFile) {
+
+    def environment = params.Environment
+    def taskFamily  = "${env.ECS_TASK_FAMILY}-${environment}"
+    def ecsService  = "${env.ECS_SERVICE}-${environment}"
+    def ecsCluster  = "${env.ECS_CLUSTER}-${environment}"
+
     if(params.Environment == 'dev'){
         sh """
             sed -i 's/\\\${ENV}/${params.Environment}/g' ${taskDefinitionFile}
